@@ -31,30 +31,30 @@ pub struct Matrix {
 }
 
 impl Matrix {
-    /// Index of the x scale factor in [`Matrix::values`].
+    /// Index of the x scale factor in [`Matrix::values`]
     pub const SCALE_X: usize = 0;
-    /// Index of the y skew factor in [`Matrix::values`].
+    /// Index of the y skew factor in [`Matrix::values`]
     pub const SKEW_Y: usize = 1;
-    /// Index of the first perspective factor in [`Matrix::values`].
+    /// Index of the first perspective factor in [`Matrix::values`]
     pub const PERSPECTIVE_0: usize = 3;
-    /// Index of the x skew factor in [`Matrix::values`].
+    /// Index of the x skew factor in [`Matrix::values`]
     pub const SKEW_X: usize = 4;
-    /// Index of the y scale factor in [`Matrix::values`].
+    /// Index of the y scale factor in [`Matrix::values`]
     pub const SCALE_Y: usize = 5;
-    /// Index of the second perspective factor in [`Matrix::values`].
+    /// Index of the second perspective factor in [`Matrix::values`]
     pub const PERSPECTIVE_1: usize = 7;
-    /// Index of the z scale factor in [`Matrix::values`].
+    /// Index of the z scale factor in [`Matrix::values`]
     pub const SCALE_Z: usize = 10;
-    /// Index of the x translation in [`Matrix::values`].
+    /// Index of the x translation in [`Matrix::values`]
     pub const TRANSLATE_X: usize = 12;
-    /// Index of the y translation in [`Matrix::values`].
+    /// Index of the y translation in [`Matrix::values`]
     pub const TRANSLATE_Y: usize = 13;
-    /// Index of the z translation in [`Matrix::values`].
+    /// Index of the z translation in [`Matrix::values`]
     pub const TRANSLATE_Z: usize = 14;
-    /// Index of the third perspective factor in [`Matrix::values`].
+    /// Index of the third perspective factor in [`Matrix::values`]
     pub const PERSPECTIVE_2: usize = 15;
 
-    /// The identity matrix.
+    /// The 4x4 identity matrix.
     #[rustfmt::skip]
     pub const IDENTITY: Self = Self {
         values: [
@@ -65,36 +65,36 @@ impl Matrix {
         ],
     };
 
-    /// Creates a matrix from sixteen row-major entries.
+    /// Creates a matrix from sixteen row-major entries
     #[must_use]
     pub const fn new(values: [f32; 16]) -> Self {
         Self { values }
     }
 
-    /// Returns the entry at `row`, `column`.
+    /// Returns the entry at `row`, `column`
     ///
     /// # Panics
     ///
-    /// Panics if `row` or `column` is 4 or greater.
+    /// Panics if `row` or `column` is *4 or greater*
     #[must_use]
     pub fn get(&self, row: usize, column: usize) -> f32 {
         self.values[Self::index(row, column)]
     }
 
-    /// Sets the entry at `row`, `column`.
+    /// Sets the entry at `row`, `column`
     ///
     /// # Panics
     ///
-    /// Panics if `row` or `column` is 4 or greater.
+    /// Panics if `row` or `column` is *4 or greater*
     pub fn set(&mut self, row: usize, column: usize, value: f32) {
         self.values[Self::index(row, column)] = value;
     }
 
     /// Applies the 3D transform to `point` and returns the resulting `x` and
-    /// `y` as an [`Offset`].
+    /// `y` as an **[`Offset`]**
     ///
     /// The result is divided by the transformed w. If that division is not
-    /// finite, the result is [`Offset::ZERO`].
+    /// *finite* , the result is **[`Offset::ZERO`]** 
     #[must_use]
     pub fn map(&self, point: Offset) -> Offset {
         let (v00, v01, v03) = (self.get(0, 0), self.get(0, 1), self.get(0, 3));
@@ -116,12 +116,12 @@ impl Matrix {
         )
     }
 
-    /// Resets this matrix to the identity.
+    /// Resets this matrix to the identity
     pub fn reset(&mut self) {
         *self = Self::IDENTITY;
     }
 
-    /// Rotates this matrix by `degrees` around the z axis.
+    /// Rotates this matrix by `degrees` around the z axis
     pub fn rotate_z(&mut self, degrees: f32) {
         let (sin, cos) = degrees.to_radians().sin_cos();
 
@@ -133,14 +133,15 @@ impl Matrix {
         }
     }
 
-    /// Scales this matrix by `x` and `y`, leaving the z axis unchanged.
+    /// Scales this matrix by `x` and `y`, leaving the z axis unchanged
     pub fn scale(&mut self, x: f32, y: f32) {
         self.scale_3d(x, y, 1.0);
     }
 
-    /// Scales this matrix by `x`, `y` and `z`.
+    /// Scales this matrix by `x`, `y` and `z`
     pub fn scale_3d(&mut self, x: f32, y: f32, z: f32) {
-        // The zip stops after three rows, so the translation row stays untouched.
+        // The zip stops after three rows, 
+        // so the translation row stays untouched
         for (row, factor) in self.values.chunks_exact_mut(4).zip([x, y, z]) {
             for value in row {
                 *value *= factor;
@@ -148,15 +149,15 @@ impl Matrix {
         }
     }
 
-    /// Translates this matrix by `x` and `y`, leaving the z axis unchanged.
+    /// Translates this matrix by `x` and `y`, leaving the z axis unchanged
     pub fn translate(&mut self, x: f32, y: f32) {
         self.translate_3d(x, y, 0.0);
     }
 
-    /// Translates this matrix by `x`, `y` and `z`.
+    /// Translates this matrix by `x`, `y` and `z`
     ///
     /// The translation is applied before the transform already in the matrix,
-    /// so it is expressed in the matrix's own (for example scaled) space.
+    /// so it is expressed in the matrix's own *(for example scaled)* space.
     pub fn translate_3d(&mut self, x: f32, y: f32, z: f32) {
         let translation: [f32; 4] = array::from_fn(|column| {
             self.get(0, column) * x
@@ -176,7 +177,7 @@ impl Matrix {
         row * 4 + column
     }
 
-    /// Dot product of row `row` of `self` with column `column` of `other`.
+    /// Dot product of `row` *(the row)* of `self` with `column` *(the column)* of `other`
     fn dot(&self, row: usize, other: &Self, column: usize) -> f32 {
         (0..4)
             .map(|k| self.get(row, k) * other.get(k, column))
@@ -185,14 +186,14 @@ impl Matrix {
 }
 
 impl Default for Matrix {
-    /// The identity matrix.
+    /// The identity matrix
     fn default() -> Self {
         Self::IDENTITY
     }
 }
 
 impl MulAssign<&Matrix> for Matrix {
-    /// Multiplies this matrix by `rhs` and stores the result in `self`.
+    /// Multiplies this matrix by `rhs` and stores the result in `self`
     fn mul_assign(&mut self, rhs: &Matrix) {
         self.values = array::from_fn(|i| self.dot(i / 4, rhs, i % 4));
     }
