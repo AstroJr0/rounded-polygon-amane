@@ -22,63 +22,63 @@ use std::ops::{Add, Div, Mul, Neg, Rem, Sub};
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Offset {
-    /// Horizontal component.
+    /// Horizontal component
     pub x: f32,
-    /// Vertical component.
+    /// Vertical component
     pub y: f32,
 }
 
 impl Offset {
-    /// The origin, `(0, 0)`.
+    /// The origin, `(0, 0)`
     pub const ZERO: Self = Self::new(0.0, 0.0);
 
-    /// An offset with both components set to positive infinity.
+    /// An offset with both components set to positive infinity
     pub const INFINITE: Self = Self::new(f32::INFINITY, f32::INFINITY);
 
-    /// The "no value" offset, with both components `NaN`.
+    /// The "no value" offset, with both components `NaN`
     ///
-    /// `NaN != NaN`, so compare with [`Offset::is_unspecified`] rather than `==`.
+    /// `NaN != NaN`, so compare with [`Offset::is_unspecified`] rather than `==`
     pub const UNSPECIFIED: Self = Self::new(f32::NAN, f32::NAN);
 
-    /// Creates an offset from its components.
+    /// Creates an offset from its components
     #[must_use]
     pub const fn new(x: f32, y: f32) -> Self {
         Self { x, y }
     }
 
-    /// Distance from the origin.
+    /// Distance from the origin
     #[must_use]
     pub fn distance(self) -> f32 {
         self.x.hypot(self.y)
     }
 
-    /// Squared distance from the origin; avoids the square root of [`Offset::distance`].
+    /// Squared distance from the origin; avoids the square root of [`Offset::distance`]
     #[must_use]
     pub fn distance_squared(self) -> f32 {
         self.x * self.x + self.y * self.y
     }
 
-    /// Returns `true` if neither component is infinite or `NaN`.
+    /// Returns `true` if neither component is infinite or `NaN`
     #[must_use]
     pub fn is_finite(self) -> bool {
         self.x.is_finite() && self.y.is_finite()
     }
 
-    /// Returns `true` unless this is [`Offset::UNSPECIFIED`].
+    /// Returns `true` unless this is [`Offset::UNSPECIFIED`]
     ///
-    /// Only an offset whose components are *both* `NaN` counts as unspecified.
+    /// Only an offset whose components are *both* `NaN` counts as unspecified
     #[must_use]
     pub fn is_specified(self) -> bool {
         !self.is_unspecified()
     }
 
-    /// Returns `true` if both components are `NaN`.
+    /// Returns `true` if both components are `NaN`
     #[must_use]
     pub fn is_unspecified(self) -> bool {
         self.x.is_nan() && self.y.is_nan()
     }
 
-    /// Linearly interpolates between `start` and `stop`.
+    /// **Linearly** interpolates between `start` and `stop`
     ///
     /// A `fraction` of `0.0` yields `start` and `1.0` yields `stop`. Values
     /// outside that range extrapolate.
@@ -90,9 +90,9 @@ impl Offset {
         )
     }
 
-    /// Returns `self` if it is specified, otherwise the result of `default`.
+    /// Returns `self` if it is specified, otherwise the result of `default`
     ///
-    /// `default` is only called when `self` is unspecified.
+    /// **`default`** is only called when `self` is unspecified
     #[must_use]
     pub fn take_or_else(self, default: impl FnOnce() -> Self) -> Self {
         if self.is_specified() {
@@ -102,19 +102,19 @@ impl Offset {
         }
     }
 
-    /// Angle of this offset from the positive x-axis, in degrees.
+    /// Angle of this offset from the positive x-axis, in **degrees**
     #[must_use]
     pub fn angle_degrees(self) -> f32 {
         self.y.atan2(self.x).to_degrees()
     }
 
-    /// Rotates this offset by `angle` degrees about the origin.
+    /// Rotates this offset by `angle` degrees about the origin
     #[must_use]
     pub fn rotate_degrees(self, angle: f32) -> Self {
         self.rotate_degrees_around(angle, Self::ZERO)
     }
 
-    /// Rotates this offset by `angle` degrees about `center`.
+    /// Rotates this offset by `angle` degrees about `center`
     #[must_use]
     pub fn rotate_degrees_around(self, angle: f32, center: Self) -> Self {
         let (sin, cos) = angle.to_radians().sin_cos();
@@ -343,5 +343,5 @@ mod tests {
 
         assert!(rotated.x.abs() < EPSILON && (rotated.y - 1.0).abs() < EPSILON);
     }
-  }
+}
       
