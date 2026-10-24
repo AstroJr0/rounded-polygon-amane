@@ -13,7 +13,7 @@ use crate::geometry::offset::Offset;
 ///
 /// # Examples
 ///
-/// ```rs
+/// ```rust
 /// use rounded_polygon_amane::geometry::offset::Offset;
 /// use rounded_polygon_amane::graphics::matrix::Matrix;
 ///
