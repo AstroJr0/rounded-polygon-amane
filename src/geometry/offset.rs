@@ -11,7 +11,7 @@ use std::ops::{Add, Div, Mul, Neg, Rem, Sub};
 ///
 /// # Examples
 ///
-/// ```rs
+/// ```rust
 /// use rounded_polygon_amane::geometry::offset::Offset;
 ///
 /// let a = Offset::new(3.0, 4.0);
